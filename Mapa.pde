@@ -62,23 +62,6 @@ class Mapa{
     }
     por = null;
     
-    //Cargo los bichitos que se van a mover
-    //(Seguramente lo termine cambiando por un spawner)
-    /*JSONArray bichos = mapita.getJSONArray("chobis");
-    if (bichos != null){
-      chobis = new Chobi[bichos.size()];
-      for (int i=0;i<bichos.size();i++){
-        JSONObject cho = bichos.getJSONObject(i);
-        
-        JSONObject pos = cho.getJSONObject("pos");
-        float x = pos.getFloat("x");
-        float y = pos.getFloat("y");
-        
-        chobis[i] = new Chobi(x,y,i);
-      }
-    }
-    bichos = null;*/
-    
     //Cargo las cajas
     JSONArray boxes = mapita.getJSONArray("cajas");
     //Todo puede ser null, así que hay que corroborar
@@ -180,10 +163,10 @@ class Mapa{
             terminados +=1;
             bicho.delete();
             bicho = null;
-            if (terminados >= objetivo){termino = true;}
           }
         }
       }
+      if (objetivo <= terminados){termino = true;}
     }
     if(termino){
       textSize(50);

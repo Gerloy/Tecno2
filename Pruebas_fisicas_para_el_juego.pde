@@ -3,7 +3,6 @@ import fisica.*;
 float pos, vel;
 
 FWorld mundo;
-//Chobi bic;
 
 Mapa map;
 
@@ -41,6 +40,7 @@ void draw(){
     }
     map.update(); //<>//
     mundo.step();
+    println("Terminados: "+map.terminados);
     
     translate(-pos,0);
     mundo.draw();
