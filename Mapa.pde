@@ -7,7 +7,8 @@ class Mapa{
   Plataforma[] paredes;
   HitCircle circulo;
   Sube_Y_Baja[] subajs;
-  float tam;
+  FWorld mundo;
+  float tam, pos, vel;
   int objetivo, terminados;
   boolean termino;
   
@@ -22,6 +23,17 @@ class Mapa{
     tam = mapita.getFloat("tam");
     objetivo = mapita.getInt("objetivo");
     terminados = 0;
+    
+    //Cargo los datos de las físicas
+    JSONObject world = mapita.getJSONObject("mundo");{
+    JSONObject gravedad = world.getJSONObject("gravedad");
+    float x = gravedad.getFloat("x");
+    float y = gravedad.getFloat("y");
+    mundo = new FWorld();
+    mundo.setGravity(x,y);
+    mundo.setEdges(0,0,tam,height);
+    mundo.setGrabbable(false);
+    }
     
     //Creo el arraylist de chobis
     chobis = new ArrayList<Chobi>();
@@ -57,7 +69,7 @@ class Mapa{
         float x = pos.getFloat("x");
         float y = pos.getFloat("y");
         
-        portales[i] = new Portal(x,y,i);
+        portales[i] = new Portal(x,y,i, mundo);
       }
     }
     por = null;
@@ -75,7 +87,7 @@ class Mapa{
         float x = pos.getFloat("x");
         float y = pos.getFloat("y");
         
-        cajas[i] = new Caja(s,x,y,i);
+        cajas[i] = new Caja(s,x,y,i,mundo);
         
       }
     }
@@ -96,7 +108,7 @@ class Mapa{
         float tx = tam.getFloat("x");
         float ty = tam.getFloat("y");
         
-        pisos[i] = new Plataforma(px,py,tx,ty,i,true);
+        pisos[i] = new Plataforma(px,py,tx,ty,i,true,mundo);
         
       }
     }
@@ -116,7 +128,7 @@ class Mapa{
         float tx = tam.getFloat("x");
         float ty = tam.getFloat("y");
         
-        paredes[i] = new Plataforma(px,py,tx,ty,i,false);
+        paredes[i] = new Plataforma(px,py,tx,ty,i,false,mundo);
         
       }
     }
@@ -134,22 +146,27 @@ class Mapa{
         float x = pos.getFloat("x");
         float y = pos.getFloat("y");
         
-        subajs[i] = new Sube_Y_Baja(s,x,y);
+        subajs[i] = new Sube_Y_Baja(s,x,y,mundo);
       }
     }
     subs = null;
     
-    circulo = new HitCircle();
+    circulo = new HitCircle(mundo);
     
     termino = false;
+    
+    pos = 0;
+    vel = mapita.getFloat("velocidad");
   }
   
   void update(){
+    pushMatrix();
+    mover();
     if (!termino){
-      circulo.update();
+      circulo.update(pos);
       if(spawns != null){
         for (Spawner spawn : spawns){
-          spawn.update(chobis);
+          spawn.update(chobis,mundo);
           if (spawn.termino){
             spawn = null;
           }
@@ -161,17 +178,36 @@ class Mapa{
           bicho.update();
           if (bicho.llego){
             terminados +=1;
-            bicho.delete();
+            bicho.delete(mundo);
             bicho = null;
           }
         }
       }
       if (objetivo <= terminados){termino = true;}
+      mundo.step();
+      translate(-pos,0);
+      mundo.draw();
     }
     if(termino){
       textSize(50);
-      textAlign(CENTER,CENTER);
       text("Ganaste",width*.5,height*.5);
+      if(mousePressed){
+        exit();
+      }
+    }
+    popMatrix();
+  }
+  
+  void mover(){
+    if (mouseX>=width*.8){
+      if (pos < map.tam-width*.5){
+        pos+=vel;
+      }else{pos =map.tam-width*.5;}
+    }
+    if (mouseX<=width*.2){
+      if(pos>=0){
+        pos-=vel;
+      }
     }
   }
 }

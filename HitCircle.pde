@@ -3,7 +3,7 @@ class HitCircle{
   FCircle circulo;
   FMouseJoint joint;
   
-  HitCircle(){
+  HitCircle(FWorld mundo){
     
     //Creo el circulo que va a chocar con la cajita
     circulo = new FCircle(width * .05);
@@ -24,11 +24,11 @@ class HitCircle{
     mundo.add(joint);
   }
   
-  void update(){
+  void update(float pos){
     joint.setTarget(mouseX+pos,mouseY);
   }
   
-  void delete(){
+  void delete(FWorld mundo){
     mundo.remove(circulo);
     mundo.remove(joint);
   }

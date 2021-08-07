@@ -2,7 +2,7 @@ class Portal{
 
   FBox collider;
   
-  Portal(float x,float y,int i){
+  Portal(float x,float y,int i, FWorld mundo){
   
     collider = new FBox(50,100);
     collider.setPosition(x,y);
@@ -16,7 +16,7 @@ class Portal{
     
   }
   
-  void delete(){
+  void delete(FWorld mundo){
     mundo.remove(collider);
   }
 }

@@ -1,50 +1,43 @@
 import fisica.*;
 
-float pos, vel;
-
-FWorld mundo;
-
 Mapa map;
-
+int estado, mapita;
 void setup(){
   size(800,600);
   frameRate(60);
-  
-  //inicializacion de fisicas
   Fisica.init(this);
-  mundo = new FWorld();
-  mundo.setGravity(0,250);
-  mundo.setEdges(0,0,width*2,height);
-  mundo.setGrabbable(false);
-  
-  pos = 0;
-  vel = width*.005;
-  
-  map = new Mapa(1);
+  estado=0;
+  mapita = 1;
+  textAlign(CENTER,CENTER);
 }
 
 void draw(){
-  if (map != null){
-    pushMatrix();
-    background(0);
+  background(0);
+  switch(estado){
     
-    if (mouseX>=width*.8){
-      if (pos < map.tam-width*.5){
-        pos+=vel;
-      }else{pos =map.tam-width*.5;}
-    }
-    if (mouseX<=width*.2){
-      if(pos>=0){
-        pos-=vel;
-      }
-    }
-    map.update(); //<>//
-    mundo.step();
-    println("Terminados: "+map.terminados);
+    case 0:
+      thread("cargarMapa");
+    break;
     
-    translate(-pos,0);
-    mundo.draw();
-    popMatrix();
-  }
-  
+    case 1:
+      textSize(50);
+      text("Cargando",width*.5,height*.5);
+    break;
+    
+    case 2:
+      map.update();
+    break;
+    
+    default:
+      textSize(50);
+      text("F",width*.5,height*.5);
+    break;
+  } //<>//
+}
+
+//Cargo el mapa en un thread aparte porque aguanten las pantallas de carga
+void cargarMapa(){
+  estado=1;
+  map = new Mapa(mapita);
+  estado=2;
 }

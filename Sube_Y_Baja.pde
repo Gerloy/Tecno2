@@ -5,7 +5,7 @@ class Sube_Y_Baja{
   float scale;
   PVector pos;
   
-  Sube_Y_Baja(float s, float x, float y){
+  Sube_Y_Baja(float s, float x, float y, FWorld mundo){
     
       scale = s;
       pos = new PVector(x,y);
@@ -35,7 +35,7 @@ class Sube_Y_Baja{
       mundo.add(joint);
   }
   
-  void delete(){
+  void delete(FWorld mundo){
     mundo.remove(tabla);
     mundo.remove(soporte);
     mundo.remove(joint);

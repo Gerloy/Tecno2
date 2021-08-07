@@ -2,7 +2,7 @@ class Caja{
   
   FBox cajita;
   
-  Caja(float s, float x, float y, int i){
+  Caja(float s, float x, float y, int i, FWorld mundo){
     
     cajita = new FBox(s,s);
     cajita.setPosition(x,y);
@@ -15,7 +15,7 @@ class Caja{
     mundo.add(cajita);
   }
   
-  void delete(){
+  void delete(FWorld mundo){
     mundo.remove(cajita);
   }
 } 

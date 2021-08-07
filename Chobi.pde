@@ -5,7 +5,7 @@ class Chobi{
   boolean llego, cambio;
   
   
-  Chobi(float x, float y, int i,int ns){
+  Chobi(float x, float y, int i, int ns, FWorld mundo){
     vel = 100; //<>//
     size_X = 50;
     llego = false;
@@ -50,7 +50,7 @@ class Chobi{
     cuerpo.setVelocity(vel,vy);
   }
   
-  void delete(){
+  void delete(FWorld mundo){
     mundo.remove(cuerpo);
   }
 }

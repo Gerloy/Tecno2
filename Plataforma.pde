@@ -2,7 +2,7 @@ class Plataforma{
   
   FBox plata;
   
-  Plataforma(float px, float py, float tx, float ty,int i, boolean tipo){
+  Plataforma(float px, float py, float tx, float ty,int i, boolean tipo, FWorld mundo){
     
     plata = new FBox(tx,ty);
     plata.setPosition(px,py);
@@ -16,7 +16,7 @@ class Plataforma{
     mundo.add(plata);
   }
   
-  void delete(){
+  void delete(FWorld mundo){
     mundo.remove(plata);
   }
 }
