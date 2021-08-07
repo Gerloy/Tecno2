@@ -1,15 +1,26 @@
 {
   "mapa": {
+    //Datos de la gravedad
+    "mundo":{
+      "gravedad":{
+        "x": 0,
+        "y": 250
+      }
+    },
+    //Puntos en los que van a aparecer los bichos
     "spawners": [
       {
         "pos": {
           "x": 400,
           "y": 0
         },
+        //Cantidad de bichos que va a hacer aparecer ese punto
         "cantidad": 3,
+        //tiempo entre la aparición de un bicho y otro (en milisegundos)
         "cooldown": 4000
       }
     ],
+    //Puertas a las que tienen que llegar los bichos
     "portales": [
       {
         "pos": {
@@ -18,15 +29,19 @@
         }
       }
     ],
+    //Cajas cuadradas
     "cajas": [
       {
+        //Tamaño
         "escala": 50,
+        //Posición del centro
         "pos": {
           "x": 300,
           "y": 70
         }
       }
     ],
+    //Plataformas horizontales
     "pisos": [
       {
         "pos": {
@@ -49,6 +64,7 @@
         }
       }
     ],
+    //Plataformas verticales
     "paredes": [
       {
         "pos": {
@@ -71,16 +87,23 @@
         }
       }
     ],
+    //Un triángulo con una tabla para catapultar a los chobis
     "subajas": [
       {
+        //Tamaño de los lados del triángulo (definen todos los tamaños)
         "escala": 100,
+        //Punto central en el lado de abajo del triángulo
         "pos": {
           "x": 400,
           "y": 600
         }
       }
     ],
+    //Tamaño en X del mapa
     "tam": 2000,
-    "objetivo": 3
+    //Cuantos chobis hay que hacer que lleguen a un portal
+    "objetivo": 3,
+    //velocidad con la que se mueve en mapa cuando ponés el mouse en un costado
+    "velocidad": 5
   }
 }
