@@ -14,7 +14,6 @@ void setup(){
 void draw(){
   background(0);
   switch(estado){
-    
     case 0:
       thread("cargarMapa");
     break;
@@ -25,6 +24,12 @@ void draw(){
     break;
     
     case 2:
+      textSize(50);
+      text("Clickeá para continuar",width*.5,height*.5);
+      if(mousePressed){estado = 3;}
+    break;
+    
+    case 3:
       map.update();
     break;
     

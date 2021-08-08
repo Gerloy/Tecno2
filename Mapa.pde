@@ -5,6 +5,8 @@ class Mapa{
   Caja[] cajas;
   Plataforma[] pisos;
   Plataforma[] paredes;
+  Plataforma[] bajarVel;
+  Plataforma[] subirVel;
   HitCircle circulo;
   Sube_Y_Baja[] subajs;
   FWorld mundo;
@@ -15,7 +17,7 @@ class Mapa{
   Mapa(int indice){
     
     //Cargo el archivo .json correspondiente al mapa que quiero cargar
-    JSONObject map_File = loadJSONObject("Map_"+nf(indice,3)+".jsonc");
+    JSONObject map_File = loadJSONObject("Map_"+nf(indice,3)+".json");
     //Cargo el objeto mapa del json
     JSONObject mapita = map_File.getJSONObject("mapa");
     
@@ -52,8 +54,9 @@ class Mapa{
         
         int c = spawn.getInt("cantidad");
         int co = spawn.getInt("cooldown");
+        float v = spawn.getFloat("velocidad"); 
         
-        spawns[i] = new Spawner(x,y,c,co,i);
+        spawns[i] = new Spawner(x,y,c,co,i,v);
       }
     }
     sp = null;
@@ -108,7 +111,7 @@ class Mapa{
         float tx = tam.getFloat("x");
         float ty = tam.getFloat("y");
         
-        pisos[i] = new Plataforma(px,py,tx,ty,i,true,mundo);
+        pisos[i] = new Plataforma(px,py,tx,ty,i,0,mundo);
         
       }
     }
@@ -128,11 +131,51 @@ class Mapa{
         float tx = tam.getFloat("x");
         float ty = tam.getFloat("y");
         
-        paredes[i] = new Plataforma(px,py,tx,ty,i,false,mundo);
+        paredes[i] = new Plataforma(px,py,tx,ty,i,1,mundo);
         
       }
     }
     pareds = null;
+    
+    JSONArray baja = mapita.getJSONArray("bajarVel");
+    if(baja != null){
+      bajarVel = new Plataforma[baja.size()];
+      for (int i = 0; i<baja.size(); i++){
+        JSONObject bajar = baja.getJSONObject(i);
+        
+        JSONObject pos = bajar.getJSONObject("pos");
+        float px = pos.getFloat("x");
+        float py = pos.getFloat("y");
+        
+        JSONObject tam = bajar.getJSONObject("tam");
+        float tx = tam.getFloat("x");
+        float ty = tam.getFloat("y");
+        
+        bajarVel[i] = new Plataforma(px,py,tx,ty,i,2,mundo);
+        
+      }
+    }
+    baja = null;
+    
+    JSONArray sube = mapita.getJSONArray("subirVel");
+    if(sube != null){
+      subirVel = new Plataforma[sube.size()];
+      for (int i = 0; i<sube.size(); i++){
+        JSONObject bajar = sube.getJSONObject(i);
+        
+        JSONObject pos = bajar.getJSONObject("pos");
+        float px = pos.getFloat("x");
+        float py = pos.getFloat("y");
+        
+        JSONObject tam = bajar.getJSONObject("tam");
+        float tx = tam.getFloat("x");
+        float ty = tam.getFloat("y");
+        
+        subirVel[i] = new Plataforma(px,py,tx,ty,i,3,mundo);
+        
+      }
+    }
+    sube = null;
     
     JSONArray subs = mapita.getJSONArray("subajas");
     if(subs != null){
@@ -146,7 +189,7 @@ class Mapa{
         float x = pos.getFloat("x");
         float y = pos.getFloat("y");
         
-        subajs[i] = new Sube_Y_Baja(s,x,y,mundo);
+        subajs[i] = new Sube_Y_Baja(s,x,y,mundo,i);
       }
     }
     subs = null;

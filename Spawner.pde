@@ -2,11 +2,10 @@ class Spawner{
   
   float px,py;
   int i, n, cooldown, cant;
-  float time;
+  float time, vel;
   boolean termino;
-  //Chobi[] chobis;
   
-  Spawner(float x, float y, int c, int co, int ns){
+  Spawner(float x, float y, int c, int co, int ns, float v){
     
     px = x;
     py = y;
@@ -16,6 +15,7 @@ class Spawner{
     cooldown = co;
     time = 0;
     termino = false;
+    vel = v;
     
   }
   
@@ -23,7 +23,7 @@ class Spawner{
     
     if(millis() >= cooldown+time){
       if(i<cant){
-        Chobi bicho = new Chobi(px,py,i,n, mundo);
+        Chobi bicho = new Chobi(px,py,vel,i,n, mundo);
         chobis.add(bicho);
         i++;
       }else{termino = true;}

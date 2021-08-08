@@ -1,11 +1,11 @@
 class Sube_Y_Baja{
-  FBox tabla;
+  FBox tabla, pared;
   FPoly soporte;
   FRevoluteJoint joint;
   float scale;
   PVector pos;
   
-  Sube_Y_Baja(float s, float x, float y, FWorld mundo){
+  Sube_Y_Baja(float s, float x, float y, FWorld mundo, int i){
     
       scale = s;
       pos = new PVector(x,y);
@@ -33,11 +33,21 @@ class Sube_Y_Baja{
       joint.setCollideConnected(true);
       joint.setDrawable(false);
       mundo.add(joint);
+      
+      //Hago una paredcita para que los chobis no se choquen
+      pared = new FBox(s,s*.75);
+      pared.setPosition(x,y);
+      pared.setStatic(true);
+      pared.setDrawable(false);
+      pared.setName("Pared_Sube_Y_Baja_"+i);
+      pared.setSensor(true);
+      mundo.add(pared);
   }
   
   void delete(FWorld mundo){
     mundo.remove(tabla);
     mundo.remove(soporte);
     mundo.remove(joint);
+    mundo.remove(pared);
   }
 }
