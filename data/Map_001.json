@@ -31,8 +31,12 @@
         "pos": {
           "x": 300,
           "y": 70
-        }
+        },
+        "peso": 50
       }
+    ],
+    "tablas": [
+
     ],
     "pisos": [
       {
@@ -94,7 +98,7 @@
       }
     ],
     "tam": 2000,
-    "objetivo": 3,
+    "objetivo": 2,
     "velocidad": 5
   }
 }

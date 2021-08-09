@@ -3,6 +3,7 @@ class Mapa{
   Spawner[] spawns;
   Portal[] portales;
   Caja[] cajas;
+  Tabla[] tablas;
   Plataforma[] pisos;
   Plataforma[] paredes;
   Plataforma[] bajarVel;
@@ -11,8 +12,8 @@ class Mapa{
   Sube_Y_Baja[] subajs;
   FWorld mundo;
   float tam, pos, vel;
-  int objetivo, terminados;
-  boolean termino;
+  int objetivo, terminados, total;
+  boolean termino, perdio;
   
   Mapa(int indice){
     
@@ -25,6 +26,7 @@ class Mapa{
     tam = mapita.getFloat("tam");
     objetivo = mapita.getInt("objetivo");
     terminados = 0;
+    total = 0;
     
     //Cargo los datos de las físicas
     JSONObject world = mapita.getJSONObject("mundo");{
@@ -57,6 +59,7 @@ class Mapa{
         float v = spawn.getFloat("velocidad"); 
         
         spawns[i] = new Spawner(x,y,c,co,i,v);
+        total += c;
       }
     }
     sp = null;
@@ -86,16 +89,40 @@ class Mapa{
         JSONObject box = boxes.getJSONObject(i);
         
         float s = box.getFloat("escala");
+        float p = box.getFloat("peso");
         JSONObject pos = box.getJSONObject("pos");
         float x = pos.getFloat("x");
         float y = pos.getFloat("y");
         
-        cajas[i] = new Caja(s,x,y,i,mundo);
+        cajas[i] = new Caja(s,x,y,p,i,mundo);
         
       }
     }
     //Lo borro por las dudas (todo sea por ahorrar memoria)
     boxes = null;
+    
+    //Cargo las tablas
+    JSONArray tables = mapita.getJSONArray("tablas");
+    //Todo puede ser null, así que hay que corroborar
+    if(tables != null){
+      tablas = new Tabla[tables.size()];
+      for (int i = 0; i<tables.size(); i++){
+        JSONObject tabla = tables.getJSONObject(i);
+        
+        float p = tabla.getFloat("peso");
+        JSONObject pos = tabla.getJSONObject("pos");
+        float x = pos.getFloat("x");
+        float y = pos.getFloat("y");
+        JSONObject tam = tabla.getJSONObject("tam");
+        float tx = tam.getFloat("x");
+        float ty = tam.getFloat("y");
+        
+        tablas[i] = new Tabla(x,y,tx,ty,p,i,mundo);
+        
+      }
+    }
+    //Lo borro por las dudas (todo sea por ahorrar memoria)
+    tables = null;
     
     JSONArray pisitos = mapita.getJSONArray("pisos");
     if(pisitos != null){
@@ -197,6 +224,7 @@ class Mapa{
     circulo = new HitCircle(mundo);
     
     termino = false;
+    perdio = false;
     
     pos = 0;
     vel = mapita.getFloat("velocidad");
@@ -204,8 +232,8 @@ class Mapa{
   
   void update(){
     pushMatrix();
-    mover();
-    if (!termino){
+    if (!termino && !perdio){
+      mover();
       circulo.update(pos);
       if(spawns != null){
         for (Spawner spawn : spawns){
@@ -223,19 +251,41 @@ class Mapa{
             terminados +=1;
             bicho.delete(mundo);
             bicho = null;
+            total--;
+          }else if (bicho.f){
+            bicho.delete(mundo);
+            bicho = null;
+            total--;
           }
         }
       }
-      if (objetivo <= terminados){termino = true;}
+      if (objetivo <= terminados){
+        termino = true;
+      }else if(total < objetivo-terminados){ //Si la cantidad de bichos que hay 
+        perdio = true;                       //y van a aparecer es menor a la necesaria el jugador pierde
+      }
       mundo.step();
       translate(-pos,0);
       mundo.draw();
+      //Info sobre el objetivo
+      textSize(height*.1);
+      text(terminados+"/"+objetivo,width-height*.15+pos,height*.15);
     }
     if(termino){
+      mundo.draw();
+      translate(-pos,0);
       textSize(50);
-      text("Ganaste",width*.5,height*.5);
+      text("Ganaste",width*.5+pos,height*.5);
       if(mousePressed){
-        exit();
+        estado = 0;
+      }
+    }else if(perdio){
+      mundo.draw();
+      translate(-pos,0);
+      textSize(50);
+      text("Perdiste",width*.5+pos,height*.5);
+      if(mousePressed){
+        estado = 0;
       }
     }
     popMatrix();
