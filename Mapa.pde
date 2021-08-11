@@ -14,6 +14,7 @@ class Mapa{
   float tam, pos, vel;
   int objetivo, terminados, total;
   boolean termino, perdio;
+  Aparecer_Cajita caj;
   
   Mapa(int indice){
     
@@ -33,9 +34,9 @@ class Mapa{
     JSONObject gravedad = world.getJSONObject("gravedad");
     float x = gravedad.getFloat("x");
     float y = gravedad.getFloat("y");
-    mundo = new FWorld();
+    mundo = new FWorld(0,0,tam+200,600);
     mundo.setGravity(x,y);
-    mundo.setEdges(0,0,tam,height);
+    mundo.setEdges(0,0,tam,900);
     mundo.setGrabbable(false);
     }
     
@@ -57,8 +58,9 @@ class Mapa{
         int c = spawn.getInt("cantidad");
         int co = spawn.getInt("cooldown");
         float v = spawn.getFloat("velocidad"); 
+        float s = spawn.getFloat("tam");
         
-        spawns[i] = new Spawner(x,y,c,co,i,v);
+        spawns[i] = new Spawner(x,y,s,c,co,i,v);
         total += c;
       }
     }
@@ -228,13 +230,13 @@ class Mapa{
     
     pos = 0;
     vel = mapita.getFloat("velocidad");
+    
+    caj = new Aparecer_Cajita(mundo);
   }
   
   void update(){
     pushMatrix();
     if (!termino && !perdio){
-      mover();
-      circulo.update(pos);
       if(spawns != null){
         for (Spawner spawn : spawns){
           spawn.update(chobis,mundo);
@@ -265,23 +267,27 @@ class Mapa{
         perdio = true;                       //y van a aparecer es menor a la necesaria el jugador pierde
       }
       mundo.step();
+      mover();
+      caj.update(mundo);
+      circulo.update(pos);
       translate(-pos,0);
       mundo.draw();
       //Info sobre el objetivo
       textSize(height*.1);
       text(terminados+"/"+objetivo,width-height*.15+pos,height*.15);
+      //text("Pos: "+pos,200+pos,100);
     }
     if(termino){
-      mundo.draw();
       translate(-pos,0);
+      mundo.draw();
       textSize(50);
       text("Ganaste",width*.5+pos,height*.5);
       if(mousePressed){
         estado = 0;
       }
     }else if(perdio){
-      mundo.draw();
       translate(-pos,0);
+      mundo.draw();
       textSize(50);
       text("Perdiste",width*.5+pos,height*.5);
       if(mousePressed){
@@ -295,7 +301,7 @@ class Mapa{
     if (mouseX>=width*.8){
       if (pos < map.tam-width*.5){
         pos+=vel;
-      }else{pos =map.tam-width*.5;}
+      }//else{pos = map.tam-width*.5;}
     }
     if (mouseX<=width*.2){
       if(pos>=0){

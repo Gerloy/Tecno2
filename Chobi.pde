@@ -1,23 +1,22 @@
 class Chobi{
   
   FCircle cuerpo;
-  float vel, velBase, sizeX; //<>//
+  float vel, velBase; //<>//
   boolean f, llego, cambio, rapido, lento;
   PVector prePos;
   int time;
   
   
-  Chobi(float x, float y, float v, int i, int ns, FWorld mundo){
+  Chobi(float x, float y, float v, float s, int i, int ns, FWorld mundo){
     vel = v; //<>//
     velBase = v;
-    sizeX = 50;
     f = false;
     llego = false;
     rapido = false;
     lento = false;
     time = 0;
 
-    cuerpo = new FCircle(sizeX);
+    cuerpo = new FCircle(s);
     cuerpo.setPosition(x,y);
     cuerpo.setDensity(20);
     cuerpo.setName("Chobi_"+ns+"_"+i);
@@ -43,17 +42,23 @@ class Chobi{
     if (!f){
       checkearContactos();
       
-      if(time >= millis()){
+      if(time > millis()){
         if(rapido){
           vel = Integer.signum(round(vel)) * velBase * 2;
         }
         if (lento){
           vel = Integer.signum(round(vel)) * velBase *.5;
         }
+      }else {
+        time = millis();
+        lento = false;
+        rapido = false;
       }
       
-      float vy = cuerpo.getVelocityY();
-      cuerpo.setVelocity(vel,vy);
+      if(cuerpo.getVelocityX()*Integer.signum(round(vel))< velBase){
+        float vy = cuerpo.getVelocityY();
+        cuerpo.setVelocity(vel,vy);
+      }
       prePos = new PVector(cuerpo.getX(),cuerpo.getY());
     }
   }
@@ -79,29 +84,23 @@ class Chobi{
           this.llego = true;
         }
         //Si el chobi hace contacto con una superficie de bajar velocidad se disminuye su velocidad
-        if((c1.getName().contains("Baja_vel")) || (c2.getName().contains("Baja_vel"))){
-          rapido = false;
+        if((c1.getName().contains("Baja_Vel")) || (c2.getName().contains("Baja_Vel"))){
           lento = true;
+          rapido = false;
           time = millis() + 5000;
         }
         //Si el chobi hace contacto con una superficie de subir velocidad se aumenta su velocidad
-        if((c1.getName().contains("Sube_vel")) || (c2.getName().contains("Sube_vel"))){
-          rapido = false;
-          lento = true;
+        if((c1.getName().contains("Sube_Vel")) || (c2.getName().contains("Sube_Vel"))){
+          rapido = true;
+          lento = false;
           time = millis() + 5000;
         }
         //Si un objeto pesado aplasta al chobi se muere
         if (c1.getDensity()>40 || c2.getDensity()>40){
-          if (cont.getY()<cuerpo.getY()-sizeX*.3){
+          if (cont.getY()<cuerpo.getY()-cuerpo.getSize()*.3){
             f = true;
           }
         }
-        //if((!c1.getName().contains("Chobi")) && (c1.getDensity()>40) && ()){
-        //  f = true;
-        //}
-        //if((!c2.getName().contains("Chobi")) && (c2.getDensity()>40)){
-        //  f = true;
-        //}
       }
     }
   }

@@ -14,7 +14,8 @@
         },
         "cantidad": 3,
         "cooldown": 4000,
-        "velocidad": 100
+        "velocidad": 100,
+        "tam": 50
       }
     ],
     "portales": [
