@@ -7,8 +7,8 @@ class Caja{
     cajita = new FBox(s,s);
     cajita.setPosition(x,y);
     cajita.setName("Caja_"+i);
-    cajita.setStroke(255);
-    cajita.setFill(0);
+    cajita.setNoStroke();
+    cajita.setFill(121,85,72);
     cajita.setDensity(p);
     cajita.setRestitution(.5);
     cajita.setGroupIndex(1);

@@ -9,14 +9,16 @@ class Plataforma{
     switch (tipo){
       case 0:
         plata.setName("Piso_"+i);
-        plata.setStroke(255);
-        plata.setFill(0);
+        plata.setNoStroke();
+        plata.setFill(121,99,61);
+        //plata.attachImage(loadImage("img/pared.png"));
       break;
       
       case 1:
         plata.setName("Pared_"+i);
-        plata.setStroke(255);
-        plata.setFill(0);
+        plata.setNoStroke();
+        plata.setFill(121,99,61);
+        //plata.attachImage(loadImage("img/pared.png"));
       break;
       
       case 2:

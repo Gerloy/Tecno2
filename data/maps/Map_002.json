@@ -27,7 +27,14 @@
       }
     ],
     "cajas": [
-      
+      {
+        "pos": {
+          "x": 100,
+          "y": 0
+        },
+        "escala": 50,
+        "peso": 80
+      }
     ],
     "tablas": [
       {
@@ -130,8 +137,11 @@
         }
       }
     ],
+    "fondo": {
+      "texId": "fondo"
+    },
     "tam": 4000,
     "objetivo": 4,
-    "velocidad": 10
+    "velocidad": 50
   }
 }

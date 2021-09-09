@@ -15,16 +15,18 @@ class Sube_Y_Baja{
       soporte.vertex(pos.x-s*.5,pos.y);
       soporte.vertex(pos.x+s*.5,pos.y);
       soporte.vertex(pos.x,pos.y-s*.75);
-      soporte.setStroke(255);
-      soporte.setFill(0);
+      soporte.setNoStroke();
+      soporte.setFill(121,85,72);
+      //soporte.attachImage(loadImage("img/soporte.png"));
       soporte.setStatic(true);
       mundo.add(soporte);
       
       //Hago la tabla
       tabla = new FBox(s*3,s*.16);
       tabla.setPosition(pos.x,pos.y-s*.75);
-      tabla.setStroke(255);
-      tabla.setFill(0);
+      tabla.setNoStroke();
+      tabla.setFill(121,99,61);
+      //tabla.attachImage(loadImage("img/pared.png"));
       tabla.setRotation(random(-QUARTER_PI*.5,QUARTER_PI*.5));
       mundo.add(tabla);
       

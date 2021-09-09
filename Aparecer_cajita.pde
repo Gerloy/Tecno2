@@ -21,7 +21,7 @@ class Aparecer_Cajita{
       FBody c1 = cont.getBody1();
       FBody c2 = cont.getBody2();
       if(c1.getName()!= null && c2.getName() != null){
-        if((c1.getName() == "Circulo") || (c2.getName() == "Circulo")){
+        if((c1.getName() == "Player") || (c2.getName() == "Player")){
           cajita = new FBox(50,50);
           cajita.setPosition(1400,0);
           cajita.setDensity(80);

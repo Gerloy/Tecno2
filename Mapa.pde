@@ -12,14 +12,17 @@ class Mapa{
   Sube_Y_Baja[] subajs;
   FWorld mundo;
   float tam, pos, vel;
-  int objetivo, terminados, total;
+  int objetivo, terminados, total, cool, time;
   boolean termino, perdio;
-  Aparecer_Cajita caj;
+  Fondo fondo;
+  Arbolitos arb;
   
   Mapa(int indice){
     
+    cool = 1000;
+    
     //Cargo el archivo .json correspondiente al mapa que quiero cargar
-    JSONObject map_File = loadJSONObject("Map_"+nf(indice,3)+".json");
+    JSONObject map_File = loadJSONObject("maps/Map_"+nf(indice,3)+".json");
     //Cargo el objeto mapa del json
     JSONObject mapita = map_File.getJSONObject("mapa");
     
@@ -34,9 +37,9 @@ class Mapa{
     JSONObject gravedad = world.getJSONObject("gravedad");
     float x = gravedad.getFloat("x");
     float y = gravedad.getFloat("y");
-    mundo = new FWorld(0,0,tam+200,600);
+    mundo = new FWorld(-400,-400,tam+400,height+400);
     mundo.setGravity(x,y);
-    mundo.setEdges(0,0,tam,900);
+    mundo.setEdges(0,0,tam,height+200);
     mundo.setGrabbable(false);
     }
     
@@ -126,6 +129,7 @@ class Mapa{
     //Lo borro por las dudas (todo sea por ahorrar memoria)
     tables = null;
     
+    //Carga pisos
     JSONArray pisitos = mapita.getJSONArray("pisos");
     if(pisitos != null){
       pisos = new Plataforma[pisitos.size()];
@@ -146,6 +150,7 @@ class Mapa{
     }
     pisitos = null;
     
+    //Cargo las paredes
     JSONArray pareds = mapita.getJSONArray("paredes");
     if(pareds != null){
       paredes = new Plataforma[pareds.size()];
@@ -166,6 +171,7 @@ class Mapa{
     }
     pareds = null;
     
+    //Cargo la platafoema que reduce velocidad
     JSONArray baja = mapita.getJSONArray("bajarVel");
     if(baja != null){
       bajarVel = new Plataforma[baja.size()];
@@ -186,6 +192,7 @@ class Mapa{
     }
     baja = null;
     
+    //Cargo la plataforma que aumenta velocidad
     JSONArray sube = mapita.getJSONArray("subirVel");
     if(sube != null){
       subirVel = new Plataforma[sube.size()];
@@ -206,6 +213,7 @@ class Mapa{
     }
     sube = null;
     
+    //Cargo los subeybajas
     JSONArray subs = mapita.getJSONArray("subajas");
     if(subs != null){
       subajs = new Sube_Y_Baja[subs.size()];
@@ -231,7 +239,13 @@ class Mapa{
     pos = 0;
     vel = mapita.getFloat("velocidad");
     
-    caj = new Aparecer_Cajita(mundo);
+    //Carga del fondo
+    JSONObject fon = mapita.getJSONObject("fondo");
+    String id = fon.getString("texId");
+    fondo = new Fondo(id);
+    fon = null;
+    
+    arb = new Arbolitos();
   }
   
   void update(){
@@ -263,35 +277,53 @@ class Mapa{
       }
       if (objetivo <= terminados){
         termino = true;
+        
       }else if(total < objetivo-terminados){ //Si la cantidad de bichos que hay 
         perdio = true;                       //y van a aparecer es menor a la necesaria el jugador pierde
+        time = millis();
       }
       mundo.step();
       mover();
-      caj.update(mundo);
       circulo.update(pos);
       translate(-pos,0);
+      fondo.dibujar(pos);
+      arb.dibujar(pos);
+      push();
+        if (fon!=null){
+          tint(255,126);
+          translate(pos,0);
+          imageMode(CORNER);
+          image(fon,-400,-400,width+700,height+700);
+        }
+      pop();
       mundo.draw();
       //Info sobre el objetivo
       textSize(height*.1);
+      fill(255);
       text(terminados+"/"+objetivo,width-height*.15+pos,height*.15);
       //text("Pos: "+pos,200+pos,100);
     }
     if(termino){
       translate(-pos,0);
+      fondo.dibujar(pos);
+      arb.dibujar(pos);
       mundo.draw();
       textSize(50);
+      fill(255);
       text("Ganaste",width*.5+pos,height*.5);
-      if(mousePressed){
-        estado = 0;
+      if(millis()>=time+cool){
+        reset();
       }
     }else if(perdio){
       translate(-pos,0);
+      fondo.dibujar(pos);
+      arb.dibujar(pos);
       mundo.draw();
       textSize(50);
+      fill(255);
       text("Perdiste",width*.5+pos,height*.5);
-      if(mousePressed){
-        estado = 0;
+      if(millis() >= time+cool){
+        reset();
       }
     }
     popMatrix();
@@ -299,13 +331,19 @@ class Mapa{
   
   void mover(){
     if (mouseX>=width*.8){
-      if (pos < map.tam-width*.5){
-        pos+=vel;
+      if (pos < map.tam-width){
+        float v = map(mouseX,width*.8,width,0,vel);
+        pos+=v;
+        fondo.movDer();
+        arb.movDer();
       }//else{pos = map.tam-width*.5;}
     }
     if (mouseX<=width*.2){
       if(pos>=0){
-        pos-=vel;
+        float v = map(mouseX,width*.2,0,0,vel);
+        pos-=v;
+        fondo.movIz();
+        arb.movIz();
       }
     }
   }
