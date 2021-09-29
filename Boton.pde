@@ -1,10 +1,14 @@
 class Boton{
   FBox btn;
   int cool, time, sta;
-  boolean activo, prendido;
+  boolean activo, prendido, desac;
   float ang;
+  Sampler act,des;
+  AudioOutput out;
+  //PShape bt;
+  //PImage tex;
   
-  Boton(float x, float y, float tx, float ty, String name, int st, FWorld world){
+  Boton(float x, float y, float tx, float ty, String name, int st, FWorld world, Minim minim){
     btn = new FBox(tx,ty);
     btn.setPosition(x,y);
     btn.setStroke(255);
@@ -20,8 +24,17 @@ class Boton{
     time = 0;
     activo = false;
     prendido = false;
+    desac = false;
     ang = 0;
     sta = st;
+    
+    out = minim.getLineOut();
+    
+    des = new Sampler("snd/desac.wav",4,minim);
+    act = new Sampler("snd/activ.wav",4,minim);
+    
+    des.patch(out);
+    act.patch(out);
   }
   
   int update(int state){
@@ -30,10 +43,14 @@ class Boton{
       btn.setFill(0);
       btn.setStroke(255);
       ArrayList<FContact> contactos = btn.getContacts();
+      if(!activo && desac){des.trigger(); desac = false;}
       if (contactos == null){
-        activo = false;
-        ang = radians(.01);
-        return(state);
+        ////if (desac){act.stop(); des.trigger(); desac = false;}
+        //if(activo){des.trigger();}
+        //des.trigger();
+        //activo = false;
+        //ang = radians(.01);
+        //return(state);
       }else{
         for (FContact cont : contactos){
           FBody c1 = cont.getBody1();
@@ -43,7 +60,12 @@ class Boton{
           if (!activo){
             if (c1.getName()!=null && c2.getName()!=null){
               if(c1.getName().contains("Player") || c2.getName().contains("Player")){
+                //act.rewind();
+                //act.play();
+                //des.stop();
+                act.trigger();
                 activo = true;
+                desac = true;
                 ang = radians(.01);
                 time = millis();
                 return(state);
@@ -59,13 +81,13 @@ class Boton{
                 if(millis()<=time+cool){
                   ang = map(millis(),time,time+cool,0,TWO_PI);
                   return state;
-                }else{ang = 0; activo = false;  return (sta);}
-              }else {ang = 0; activo = false; return state;}
+                }else{ang = 0; return (sta);}
+              }else {activo = false; desac = false; ang = 0; return state;}
             }
           }
         }
       }
-    }else{activo = false; btn.setDrawable(false); btn.setNoFill(); btn.setNoStroke();}
+    }else{btn.setDrawable(false); btn.setNoFill(); btn.setNoStroke();}
     return state;
   }
   

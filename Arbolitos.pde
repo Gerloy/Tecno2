@@ -11,7 +11,7 @@ class Arbolitos{
     }
     
     pos = 0;
-    vel = 10;
+    vel = .5;
   }
   
   void dibujar(float p){
@@ -21,7 +21,6 @@ class Arbolitos{
       for (int i=0; i<4; i++){
         image(arbolitos[i],-1920+arbolitos[i].width*i,0);  
       }
-      //image(tex,width*.65,height*.75);
     pop();
   }
   

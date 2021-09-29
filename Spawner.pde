@@ -19,11 +19,11 @@ class Spawner{
     
   }
   
-  void update(ArrayList<Chobi> chobis, FWorld mundo){
+  void update(ArrayList<Chobi> chobis, FWorld mundo, Minim minim){
     
     if(millis() >= cooldown+time){
       if(i<cant){
-        Chobi bicho = new Chobi(px,py,vel,scale,i,n, mundo);
+        Chobi bicho = new Chobi(px,py,vel,scale,i,n,mundo,minim);
         chobis.add(bicho);
         i++;
       }else{termino = true;}

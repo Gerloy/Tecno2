@@ -12,12 +12,27 @@ class Mapa{
   Sube_Y_Baja[] subajs;
   FWorld mundo;
   float tam, pos, vel;
-  int objetivo, terminados, total, cool, time;
+  int objetivo, terminados, total, cool, time, sig;
   boolean termino, perdio;
   Fondo fondo;
   Arbolitos arb;
   
-  Mapa(int indice){
+  //cosas del sonido
+  //Minim minim;
+  AudioOutput out;
+  Sampler win,lose,music;
+  
+  Mapa(int indice, Minim minim){
+    
+    //cosas del sonido
+    //minim = new Minim(app);
+    lose = new Sampler("snd/derr.wav",4,minim);
+    win = new Sampler("snd/ganar.wav",4,minim);
+    
+    out = minim.getLineOut();
+    
+    lose.patch(out);
+    win.patch(out);
     
     cool = 1000;
     
@@ -244,16 +259,16 @@ class Mapa{
     String id = fon.getString("texId");
     fondo = new Fondo(id);
     fon = null;
+    sig = mapita.getInt("siguiente");
     
     arb = new Arbolitos();
   }
   
-  void update(){
-    pushMatrix();
+  void update(Minim minim){
     if (!termino && !perdio){
       if(spawns != null){
         for (Spawner spawn : spawns){
-          spawn.update(chobis,mundo);
+          spawn.update(chobis,mundo,minim);
           if (spawn.termino){
             spawn = null;
           }
@@ -262,7 +277,7 @@ class Mapa{
       
       if(chobis != null){
         for(Chobi bicho : chobis){
-          bicho.update();
+          bicho.update(total,objetivo,terminados);
           if (bicho.llego){
             terminados +=1;
             bicho.delete(mundo);
@@ -277,56 +292,99 @@ class Mapa{
       }
       if (objetivo <= terminados){
         termino = true;
+        win.trigger();
+        time = millis();
+        //win.play();
         
       }else if(total < objetivo-terminados){ //Si la cantidad de bichos que hay 
         perdio = true;                       //y van a aparecer es menor a la necesaria el jugador pierde
+        lose.trigger();
         time = millis();
       }
       mundo.step();
       mover();
-      circulo.update(pos);
-      translate(-pos,0);
-      fondo.dibujar(pos);
-      arb.dibujar(pos);
-      push();
-        if (fon!=null){
-          tint(255,126);
-          translate(pos,0);
-          imageMode(CORNER);
-          image(fon,-400,-400,width+700,height+700);
-        }
-      pop();
-      mundo.draw();
-      //Info sobre el objetivo
-      textSize(height*.1);
-      fill(255);
-      text(terminados+"/"+objetivo,width-height*.15+pos,height*.15);
-      //text("Pos: "+pos,200+pos,100);
+      circulo.update(pos);     
     }
     if(termino){
-      translate(-pos,0);
-      fondo.dibujar(pos);
-      arb.dibujar(pos);
-      mundo.draw();
-      textSize(50);
-      fill(255);
-      text("Ganaste",width*.5+pos,height*.5);
       if(millis()>=time+cool){
-        reset();
+        if(sig!=-1){
+          mapita = sig;
+          estado = 1;
+        }else{reset();}
       }
     }else if(perdio){
-      translate(-pos,0);
-      fondo.dibujar(pos);
-      arb.dibujar(pos);
-      mundo.draw();
-      textSize(50);
-      fill(255);
-      text("Perdiste",width*.5+pos,height*.5);
       if(millis() >= time+cool){
         reset();
       }
     }
-    popMatrix();
+  }
+  
+  void dibujar(){
+    //Fondo
+      translate(-pos,0);
+      fondo.dibujar(pos);
+      arb.dibujar(pos);
+      
+    //Plataformas inamovibles
+    //paredes
+      for(Plataforma pared : paredes){
+        pared.dibujar();
+      }
+    //pisos
+      for(Plataforma piso : pisos){
+        piso.dibujar();
+      }
+    //Subir vel
+      for(Plataforma sub : subirVel){
+        sub.dibujar();
+      }
+    //Bajar vel
+      for(Plataforma baj : bajarVel){
+        baj.dibujar();
+      }
+    //Portales
+      for(Portal por : portales){
+        por.dibujar();
+      }
+    
+    
+    //Objetos interactuables
+    //Sube y Bajas
+      for (Sube_Y_Baja suba : subajs){
+        suba.dibujar();
+      }
+    //Tablas
+      for(Tabla tab : tablas){
+        tab.dibujar();
+      }
+    //Cajas
+      for(Caja caj : cajas){
+        caj.dibujar();
+      }
+    //dibujar los chobis
+      for(Chobi cho : chobis){
+        cho.dibujar();
+      }
+    
+    //Cosas de la interfaz
+    //Player
+      circulo.dibujar();
+    //Info sobre el objetivo
+      textSize(height*.1);
+      fill(255);
+      text(terminados+"/"+objetivo,width-height*.15+pos,height*.15);
+      //text("Pos: "+pos,200+pos,100);
+      
+    //Victoria y derrota
+      if(termino){
+        textSize(50);
+        fill(255);
+        text("Ganaste",width*.5+pos,height*.5);
+      }else if (perdio){
+        textSize(50);
+        fill(255);
+        text("Perdiste",width*.5+pos,height*.5);
+      }
   }
   
   void mover(){

@@ -1,7 +1,7 @@
 {
   "mapa": {
-    "mundo":{
-      "gravedad":{
+    "mundo": {
+      "gravedad": {
         "x": 0,
         "y": 250
       }
@@ -21,8 +21,8 @@
     "portales": [
       {
         "pos": {
-          "x": 25,
-          "y": 230
+          "x": 60,
+          "y": 261
         }
       }
     ],
@@ -40,6 +40,16 @@
 
     ],
     "pisos": [
+      {
+        "pos": {
+          "x": 400,
+          "y": 600
+        },
+        "tam": {
+          "x": 1230,
+          "y": 20
+        }
+      },
       {
         "pos": {
           "x": 100,
@@ -86,20 +96,24 @@
     "bajarVel": [
 
     ],
-    "subirVel":[
-      
+    "subirVel": [
+
     ],
     "subajas": [
       {
         "escala": 100,
         "pos": {
           "x": 400,
-          "y": 600
+          "y": 592
         }
       }
     ],
-    "tam": 2000,
+    "fondo": {
+      "texId": "fondo"
+    },
+    "tam": 1260,
     "objetivo": 2,
-    "velocidad": 5
+    "velocidad": 5,
+    "siguiente": 2
   }
 }

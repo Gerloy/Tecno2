@@ -1,8 +1,13 @@
 import fisica.*;
-import gab.opencv.*;
-import processing.video.*;
 import java.awt.*;
 import java.awt.event.*;
+import tsps.*;
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+import ddf.minim.effects.*;
+import ddf.minim.signals.*;
+import ddf.minim.spi.*;
+import ddf.minim.ugens.*;
 
 Mapa map;
 int estado, mapita;
@@ -10,38 +15,42 @@ Menu menu;
 PFont fuente;
 Robot robot;
 
-Capture cap;
-String[] camList;
-PImage cam,fon;
-
 JSONObject config;
 boolean usaCamara;
 
-final int ancho = 640;
-final int alto = 480;
-
 float x,y;
 
-OpenCV opencv;
+//OpenCV opencv;
+TSPS tspsReceiver;
+int id;
+
+//Sonido
+Minim minim;
 
 void settings(){
-  size(1280,720);
+  size(1280,720,P2D);
   noSmooth();
   
 }
 
 void setup(){
-  frameRate(30);
+  frameRate(60);
   //Para que las imágenes escalen sin filtros
   hint(DISABLE_TEXTURE_MIPMAPS);
+  //Pone el textureSampling en lineal para que
+  //no se le aplique filtro a las texturas
+  ((PGraphicsOpenGL)g).textureSampling(2);
+  
+  minim = new Minim(this);
+  
   Fisica.init(this);
   estado=0;
-  mapita = 2;
+  mapita = 1;
   fuente = createFont("Fuente.ttf",48);
-  menu = new Menu();
+  menu = new Menu(minim);
   textAlign(CENTER,CENTER);
   textFont(fuente);
-  //textureWrap(REPEAT);
+  textureWrap(REPEAT);
   noCursor();
   x = 0;
   y = 0;
@@ -55,36 +64,12 @@ void setup(){
     e.printStackTrace();
   }
   
-  config = loadJSONObject("config.json");
-  usaCamara = false;
-  camList = Capture.list();
-  if (config.getInt("camara")!=-1){
-    if (camList[config.getInt("camara")]!=null){
-      cap = new Capture(this,camList[config.getInt("camara")]);
-      cap.start();
-      opencv = new OpenCV(this,ancho,alto);
-      usaCamara = true;
-    }else if (camList[0]!=null){
-      cap = new Capture(this,camList[0]);
-      cap.start();
-      opencv = new OpenCV(this,ancho,alto);
-      usaCamara = true;
-      config.setInt("camara",0);
-    }else{config.setInt("camara",-1);}
-  }else if (camList[0]!=null){
-    cap = new Capture(this,camList[0]);
-    cap.start();
-    opencv = new OpenCV(this,ancho,alto);
-    usaCamara = true;
-    config.setInt("camara",0);
-  }else{config.setInt("camara",-1);}
+  tspsReceiver = new TSPS(this,12000);
 }
 
 void draw(){
   background(0);
-  if (usaCamara){
-    updateCamara();
-  }
+  camUpdate();
   switch(estado){
     case 0:
       menu.update();
@@ -109,7 +94,8 @@ void draw(){
     break;
     
     case 4:
-      map.update();
+      map.update(minim);
+      map.dibujar();
     break;
     
     default:
@@ -123,34 +109,38 @@ void draw(){
 void cargarMapa(){
   estado=2;
   menu = null;
-  map = new Mapa(mapita);
+  map = new Mapa(mapita,minim);
   estado=4;
 }
 
 void reset(){
-  menu = new Menu();
+  menu = new Menu(minim);
   estado = 0;
 }
 
-void updateCamara(){
-  if(cap!=null){
-    if(cap.available()){
-      cap.read();
-      cam = cap.copy();
-      
-      opencv.loadImage(cam);
-      opencv.flip(OpenCV.HORIZONTAL);
-      
-      float px = map(opencv.max().x,0,ancho,-400,width+400);
-      float py = map(opencv.max().y,0,alto,-400,height+400);
-      
-      if(dist(x,y,px,py)>=20){
-        x = px;
-        y = py;
-      }
-      
-      robot.mouseMove(int(x),int(y));
-      fon = opencv.getSnapshot();
+void camUpdate(){
+  TSPSPerson[] blobs = tspsReceiver.getPeopleArray();
+  
+  if (blobs.length>=1){
+    float px = blobs[0].boundingRect.x*(width+400)-200;
+    float py = blobs[0].boundingRect.y*(height+400)-200;
+    
+    if(dist(x,y,px,py)>=20){
+      x = px;
+      y = py;
     }
+    robot.mouseMove(int(x),int(y));
   }
+  
+  /*for(TSPSPerson blob : blobs){
+    float px = blob.boundingRect.x*(width+800)-400;
+    float py = blob.boundingRect.y*(height+800)-400;
+    
+    if(dist(x,y,px,py)>=20){
+      x = px;
+      y = py;
+    }
+    
+    robot.mouseMove(int(x),int(y));
+  }*/
 }

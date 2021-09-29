@@ -7,7 +7,7 @@ class Fondo{
     tex = loadImage("img/"+texId+".png");
     tex.resize(int(width*1.5),int(height*1.5));
     pos = 0;
-    vel = 2;
+    vel = .25;
   }
   
   void dibujar(float p){

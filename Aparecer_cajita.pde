@@ -11,7 +11,6 @@ class Aparecer_Cajita{
     coli.setSensor(true);
     coli.setName("wdawdawd");
     coli.setStatic(true);
-    coli.setDrawable(false);
     m.add(coli);
   }
   
@@ -25,8 +24,6 @@ class Aparecer_Cajita{
           cajita = new FBox(50,50);
           cajita.setPosition(1400,0);
           cajita.setDensity(80);
-          cajita.setFill(0);
-          cajita.setStroke(255);
           m.add(cajita);
           cajita.addImpulse(0,-50);
           m.remove(coli);

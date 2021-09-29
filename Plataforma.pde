@@ -1,7 +1,9 @@
 class Plataforma{
   
   FBox plata;
-  
+  PShape pla;
+  PImage tex;
+  int u,v;
   Plataforma(float px, float py, float tx, float ty,int i, int tipo, FWorld mundo){
     
     plata = new FBox(tx,ty);
@@ -9,35 +11,54 @@ class Plataforma{
     switch (tipo){
       case 0:
         plata.setName("Piso_"+i);
-        plata.setNoStroke();
-        plata.setFill(121,99,61);
-        //plata.attachImage(loadImage("img/pared.png"));
+        tex = loadImage("img/tabla.png");
+        u = 16;
+        v = 16;
       break;
       
       case 1:
         plata.setName("Pared_"+i);
-        plata.setNoStroke();
-        plata.setFill(121,99,61);
-        //plata.attachImage(loadImage("img/pared.png"));
+        tex = loadImage("img/pared.png");
+        u = 16;
+        v = round(tx*ty/u)/6;
       break;
       
       case 2:
         plata.setName("Baja_Vel_"+i);
-        plata.setStroke(255,0,0);
-        plata.setFill(255,0,0);
+        tex = loadImage("img/baja.png");
+        u = 16;
+        v = 16;
       break;
       
       case 3:
         plata.setName("Sube_Vel_"+i);
-        plata.setStroke(0,255,0);
-        plata.setFill(0,255,0);
+        tex = loadImage("img/sube.png");
+        u = 16;
+        v = 16;
       break;
     }
-    //plata.setStroke(255);
-    //plata.setFill(0);
     plata.setStatic(true);
     plata.setGroupIndex(-1);
     mundo.add(plata);
+    
+    
+    pla = createShape();
+    pla.beginShape();
+      pla.noStroke();
+      pla.textureMode(IMAGE);
+      pla.texture(tex);
+      pla.vertex(-tx*.5,-ty*.5,0,0);
+      pla.vertex(tx*.5,-ty*.5,u,0);
+      pla.vertex(tx*.5,ty*.5,u,v);
+      pla.vertex(-tx*.5,ty*.5,0,v);
+    pla.endShape();
+  }
+  
+  void dibujar(){
+    pushMatrix();
+      translate(plata.getX(),plata.getY());
+      shape(pla);
+    popMatrix();
   }
   
   void delete(FWorld mundo){

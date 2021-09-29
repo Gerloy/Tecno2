@@ -10,7 +10,7 @@ class Menu{
   HitCircle pj;
   PImage fondo;
   
-  Menu(){
+  Menu(Minim minim){
     begin = false;
     mundo = new FWorld(-400,-400,width+400,height+400);
     mundo.setGravity(0,0);
@@ -22,10 +22,10 @@ class Menu{
     //config = loadJSONObject("config.json");
     fondo = loadImage("img/fondo.png");
     
-    btnStart = new Boton(width*.7,height*.5,400,100,"Start",2,mundo);
-    btnOptions = new Boton(width*.7,height*.65,400,100,"Options",1,mundo);
-    btnExit = new Boton(width*.7,height*.8,400,100,"Exit",-1,mundo);
-    btnBack = new Boton(width*.7,height*.8,400,100,"Back",0,mundo);
+    btnStart = new Boton(width*.7,height*.5,400,100,"Start",2,mundo,minim);
+    btnOptions = new Boton(width*.7,height*.65,400,100,"Options",1,mundo,minim);
+    btnExit = new Boton(width*.7,height*.8,400,100,"Exit",-1,mundo,minim);
+    btnBack = new Boton(width*.7,height*.8,400,100,"Back",0,mundo,minim);
     
   }
   
@@ -87,14 +87,19 @@ class Menu{
     pushStyle();
       imageMode(CENTER);
       image(fondo,width*.5,height*.5,width,height);
+    popStyle();
+    /*pushStyle();
+      imageMode(CENTER);
+      image(fondo,width*.5,height*.5,width,height);
       if (fon!=null){
         tint(255,126);
         imageMode(CORNER);
         image(fon,-400,-400,width+700,height+700);
       }
-    popStyle();
+    popStyle();*/
     switch (state){
       case 0:
+      //Cosas de debug
         //pushStyle();
         //  textAlign(LEFT,CENTER);
         //  text(btnStart.btn.getName()+": "+btnStart.activo,40,40);
@@ -181,6 +186,6 @@ class Menu{
     }
     noFill();
     stroke(255);
-    ellipse(pj.circulo.getX(),pj.circulo.getY(),pj.circulo.getSize(),pj.circulo.getSize());
+    pj.dibujar();
   }
 }
