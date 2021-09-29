@@ -53,10 +53,10 @@ class Chobi{
       izq[0].noStroke();
       izq[0].textureMode(NORMAL);
       izq[0].texture(iz[0]);
-      izq[0].vertex(-40,-40,0,0);
-      izq[0].vertex(40,-40,1,0);
-      izq[0].vertex(40,40,1,1);
-      izq[0].vertex(-40,40,0,1);
+      izq[0].vertex(-s*.5,-s*.5,0,0);
+      izq[0].vertex(s*.5,-s*.5,1,0);
+      izq[0].vertex(s*.5,s*.5,1,1);
+      izq[0].vertex(-s*.5,s*.5,0,1);
     izq[0].endShape();
     
     izq[1] = createShape();
@@ -64,10 +64,10 @@ class Chobi{
       izq[1].noStroke();
       izq[1].textureMode(NORMAL);
       izq[1].texture(iz[1]);
-      izq[1].vertex(-40,-40,0,0);
-      izq[1].vertex(40,-40,1,0);
-      izq[1].vertex(40,40,1,1);
-      izq[1].vertex(-40,40,0,1);
+      izq[1].vertex(-s*.5,-s*.5,0,0);
+      izq[1].vertex(s*.5,-s*.5,1,0);
+      izq[1].vertex(s*.5,s*.5,1,1);
+      izq[1].vertex(-s*.5,s*.5,0,1);
     izq[1].endShape();
     
     de = new PShape[2];
@@ -76,10 +76,10 @@ class Chobi{
       de[0].noStroke();
       de[0].textureMode(NORMAL);
       de[0].texture(der[0]);
-      de[0].vertex(-40,-40,0,0);
-      de[0].vertex(40,-40,1,0);
-      de[0].vertex(40,40,1,1);
-      de[0].vertex(-40,40,0,1);
+      de[0].vertex(-s*.5,-s*.5,0,0);
+      de[0].vertex(s*.5,-s*.5,1,0);
+      de[0].vertex(s*.5,s*.5,1,1);
+      de[0].vertex(-s*.5,s*.5,0,1);
     de[0].endShape();
     
     de[1] = createShape();
@@ -87,10 +87,10 @@ class Chobi{
       de[1].noStroke();
       de[1].textureMode(NORMAL);
       de[1].texture(der[1]);
-      de[1].vertex(-40,-40,0,0);
-      de[1].vertex(40,-40,1,0);
-      de[1].vertex(40,40,1,1);
-      de[1].vertex(-40,40,0,1);
+      de[1].vertex(-s*.5,-s*.5,0,0);
+      de[1].vertex(s*.5,-s*.5,1,0);
+      de[1].vertex(s*.5,s*.5,1,1);
+      de[1].vertex(-s*.5,s*.5,0,1);
     de[1].endShape();
     
     
@@ -196,7 +196,7 @@ class Chobi{
   void dibujar(){
     if(act){
       pushMatrix();
-        translate(cuerpo.getX(),cuerpo.getY()-13);
+        translate(cuerpo.getX(),cuerpo.getY());
         switch (sha){
           case 0: 
             shape(izq[0]);

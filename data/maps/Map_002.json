@@ -15,7 +15,7 @@
         "cantidad": 6,
         "cooldown": 6000,
         "velocidad": 50,
-        "tam": 50
+        "tam": 70
       }
     ],
     "portales": [
@@ -143,6 +143,6 @@
     "tam": 2100,
     "objetivo": 4,
     "velocidad": 25,
-    "siguiente":  -1
+    "siguiente":  3
   }
 }

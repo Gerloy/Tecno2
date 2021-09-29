@@ -314,7 +314,7 @@ class Mapa{
       }
     }else if(perdio){
       if(millis() >= time+cool){
-        reset();
+        estado = 1;
       }
     }
   }
